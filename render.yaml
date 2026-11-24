@@ -38,6 +38,12 @@ services:
       # onrender.com URL; set it once you attach a custom domain.
       - key: APP_URL
         sync: false
+      # Super admin created on first start of an empty database. Without the
+      # password nothing is created. Ignored once a super admin exists.
+      - key: INITIAL_ADMIN_EMAIL
+        sync: false
+      - key: INITIAL_ADMIN_PASSWORD
+        sync: false
       # Supabase → Storage → S3 Connection
       - key: S3_ENDPOINT
         sync: false

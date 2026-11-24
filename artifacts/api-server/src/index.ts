@@ -218,32 +218,55 @@ async function initDb() {
   `);
   logger.info("DB init: messages_management permission ensured");
 
-  // Auto-seed super_admin if none exists (runs on every startup; idempotent)
+  // Auto-seed super_admin if none exists (runs on every startup; idempotent).
+  // Credentials come from INITIAL_ADMIN_EMAIL / INITIAL_ADMIN_PASSWORD. In
+  // production there is no default password: without the env var, seeding is
+  // skipped. Outside production we fall back to a well-known dev password.
   const existing = await db
     .select({ id: usersTable.id })
     .from(usersTable)
     .where(eq(usersTable.role, "super_admin"))
     .limit(1);
 
-  if (existing.length === 0) {
-    const passwordHash = await bcrypt.hash("SuperAdmin123!", 12);
-    const [superAdmin] = await db.insert(usersTable).values({
-      email: "admin@nextcarmarket.com",
-      passwordHash,
-      role: "super_admin",
-      firstName: "Super",
-      lastName: "Admin",
-      isActive: true,
-      isEmailVerified: true,
-    }).returning();
-    await db.insert(adminProfilesTable).values({
-      userId: superAdmin.id,
-      department: "Management",
-    });
-    logger.info("DB init: super_admin seeded (admin@nextcarmarket.com)");
-  } else {
+  if (existing.length > 0) {
     logger.info("DB init: super_admin already exists, skipping seed");
+    return;
   }
+
+  const isProduction = process.env.NODE_ENV === "production";
+  const adminEmail =
+    process.env.INITIAL_ADMIN_EMAIL?.trim() || "admin@nextcarmarket.com";
+  let adminPassword = process.env.INITIAL_ADMIN_PASSWORD;
+
+  if (!adminPassword) {
+    if (isProduction) {
+      logger.warn(
+        "DB init: no super_admin exists and INITIAL_ADMIN_PASSWORD is not set — skipping super_admin seed. " +
+          "Set INITIAL_ADMIN_PASSWORD (and optionally INITIAL_ADMIN_EMAIL) and restart to create one.",
+      );
+      return;
+    }
+    adminPassword = "SuperAdmin123!";
+    logger.warn(
+      "DB init: INITIAL_ADMIN_PASSWORD not set — using the development default password for the seeded super_admin",
+    );
+  }
+
+  const passwordHash = await bcrypt.hash(adminPassword, 12);
+  const [superAdmin] = await db.insert(usersTable).values({
+    email: adminEmail,
+    passwordHash,
+    role: "super_admin",
+    firstName: "Super",
+    lastName: "Admin",
+    isActive: true,
+    isEmailVerified: true,
+  }).returning();
+  await db.insert(adminProfilesTable).values({
+    userId: superAdmin.id,
+    department: "Management",
+  });
+  logger.info({ email: adminEmail }, "DB init: super_admin seeded");
 }
 
 const httpServer = createServer(app);

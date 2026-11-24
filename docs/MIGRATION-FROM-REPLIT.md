@@ -99,7 +99,11 @@ from the Replit file tree, then upload it to the Render disk in step 4 (Render
 
 - `users.replit_sub` and the `sessions` table are left in the schema so the
   data dump restores cleanly. Nothing uses them now, and they can be dropped later.
-- On an **empty** database the server creates `admin@nextcarmarket.com` with
-  a default password (`artifacts/api-server/src/index.ts`). After a data
-  migration your existing super admin is kept, so this doesn't happen. If you
-  ever start fresh, change that password immediately.
+- On an **empty** database (no `super_admin` user) the server creates one at
+  startup from `INITIAL_ADMIN_EMAIL` (default `admin@nextcarmarket.com`) and
+  `INITIAL_ADMIN_PASSWORD` (`artifacts/api-server/src/index.ts`). In
+  production there is no default password: if `INITIAL_ADMIN_PASSWORD` is
+  unset, nothing is created and a warning is logged. Outside production it
+  falls back to the dev password `SuperAdmin123!`. After a data migration your
+  existing super admin is kept, so this doesn't happen. If you do start fresh,
+  set a strong password in Render, log in, change it, then clear the variable.
