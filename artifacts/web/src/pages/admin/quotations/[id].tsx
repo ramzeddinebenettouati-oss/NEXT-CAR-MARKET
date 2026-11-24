@@ -1,6 +1,6 @@
 import { useParams, Link } from "wouter";
 import { useFormatters } from "@/hooks/use-formatters";
-import { useGetQuotation } from "@workspace/api-client-react";
+import { useGetQuotation, getGetQuotationQueryKey } from "@workspace/api-client-react";
 import { AdminLayout } from "@/components/admin-layout";
 import { useAdminPermissions } from "@/hooks/use-admin-permissions";
 import { useAuth } from "@/hooks/use-auth";
@@ -73,7 +73,7 @@ export default function AdminQuotationDetail() {
   const canViewCommission = isSuperAdmin || can("commission_management");
 
   const { data: q, isLoading } = useGetQuotation(id!, {
-    query: { enabled: !!id && hasPermission && !permLoading },
+    query: { queryKey: getGetQuotationQueryKey(id!), enabled: !!id && hasPermission && !permLoading },
   });
 
   if (!permLoading && !hasPermission) {

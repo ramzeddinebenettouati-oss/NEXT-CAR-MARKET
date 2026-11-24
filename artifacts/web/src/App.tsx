@@ -11,7 +11,6 @@ import Login from "@/pages/login";
 import Register from "@/pages/register";
 import ForgotPassword from "@/pages/forgot-password";
 import ResetPassword from "@/pages/reset-password";
-import ReplitCallback from "@/pages/auth/replit-callback";
 import WeChatCallback from "@/pages/auth/wechat-callback";
 import GoogleCallback from "@/pages/auth/google-callback";
 import Dashboard from "@/pages/dashboard";
@@ -79,7 +78,6 @@ function Router() {
       <Route path="/register" component={Register} />
       <Route path="/forgot-password" component={ForgotPassword} />
       <Route path="/reset-password" component={ResetPassword} />
-      <Route path="/auth/replit-callback" component={ReplitCallback} />
       <Route path="/auth/wechat-callback" component={WeChatCallback} />
       <Route path="/auth/google-callback" component={GoogleCallback} />
       <Route path="/vehicles" component={Vehicles} />

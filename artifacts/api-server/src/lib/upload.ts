@@ -5,8 +5,12 @@ import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
-// Single canonical uploads directory — exported so app.ts can serve from the same path
-export const UPLOADS_DIR = path.resolve(__dirname, "../../uploads");
+// Single canonical uploads directory — exported so app.ts can serve from the same path.
+// In production point UPLOADS_DIR at a persistent disk (see render.yaml); the
+// container filesystem is wiped on every deploy.
+export const UPLOADS_DIR = process.env.UPLOADS_DIR
+  ? path.resolve(process.env.UPLOADS_DIR)
+  : path.resolve(__dirname, "../../uploads");
 
 if (!fs.existsSync(UPLOADS_DIR)) {
   fs.mkdirSync(UPLOADS_DIR, { recursive: true });

@@ -1,4 +1,7 @@
 import express, { type Express, type Request, type Response, type NextFunction } from "express";
+import fs from "fs";
+import path from "path";
+import { fileURLToPath } from "url";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import pinoHttp from "pino-http";
@@ -6,7 +9,6 @@ import rateLimit from "express-rate-limit";
 import router from "./routes";
 import { logger } from "./lib/logger";
 import { UPLOADS_DIR } from "./lib/upload";
-import { replitAuthMiddleware } from "./middlewares/replitAuthMiddleware";
 
 const app: Express = express();
 
@@ -36,7 +38,6 @@ app.use(cors({ origin: true, credentials: true }));
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(replitAuthMiddleware);
 
 // Brute-force protection for credential and refresh-token endpoints.
 // The store is intentionally process-local; deployments should keep a single
@@ -102,6 +103,26 @@ app.use("/api", router);
 
 // Serve uploaded files (images and videos) — path resolved from upload.ts constant
 app.use("/api/uploads", express.static(UPLOADS_DIR));
+
+// ── Web frontend ────────────────────────────────────────────────────────────
+// In production the API server also serves the built React app
+// (artifacts/web/dist/public), so the whole platform runs as one service.
+// Override the location with WEB_DIST_DIR if needed.
+const webDistDir = process.env.WEB_DIST_DIR
+  ? path.resolve(process.env.WEB_DIST_DIR)
+  : path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../web/dist/public");
+const webIndexHtml = path.join(webDistDir, "index.html");
+
+if (fs.existsSync(webIndexHtml)) {
+  app.use(express.static(webDistDir, { index: false, maxAge: "1h" }));
+  // SPA fallback: any non-API GET that didn't match a file gets index.html
+  app.get(/^(?!\/api\/|\/socket\.io\/).*/, (req, res, next) => {
+    if (!req.accepts("html")) return next();
+    res.setHeader("Cache-Control", "no-cache");
+    res.sendFile(webIndexHtml);
+  });
+  logger.info({ webDistDir }, "Serving web frontend");
+}
 
 // ── Global error handler ────────────────────────────────────────────────────
 // Catches unhandled errors from route handlers, including Postgres errors

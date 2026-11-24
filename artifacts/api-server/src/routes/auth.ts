@@ -18,7 +18,7 @@ import { sendPasswordResetEmail } from "../lib/mailer";
 
 const router = Router();
 const SALT_ROUNDS = 12;
-const APP_URL = process.env.APP_URL ?? "https://autocango.replit.app";
+const APP_URL = process.env.APP_URL ?? process.env.RENDER_EXTERNAL_URL ?? "http://localhost:5000";
 
 function appOrigin(req: { protocol: string; get(name: string): string | undefined }): string {
   return process.env.APP_URL || `${req.protocol}://${req.get("host")}`;

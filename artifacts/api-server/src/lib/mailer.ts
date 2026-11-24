@@ -5,7 +5,7 @@ const SMTP_PORT = parseInt(process.env.SMTP_PORT ?? "587", 10);
 const SMTP_USER = process.env.SMTP_USER;
 const SMTP_PASS = process.env.SMTP_PASS;
 const SMTP_FROM = process.env.SMTP_FROM ?? "NEXT CAR MARKET <noreply@autocango.com>";
-const APP_URL = process.env.APP_URL ?? "https://autocango.replit.app";
+const APP_URL = process.env.APP_URL ?? process.env.RENDER_EXTERNAL_URL ?? "http://localhost:5000";
 
 let _transporter: nodemailer.Transporter | null = null;
 

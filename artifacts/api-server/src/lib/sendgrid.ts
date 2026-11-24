@@ -20,14 +20,15 @@ export async function sendEmail(opts: SendEmailOptions) {
 
   const fromAddress = opts.from || getDefaultFromAddress();
 
-  const msg: sgMail.MailDataRequired = {
+  // SendGrid's type wants at least one of text/html; callers always pass one.
+  const msg = {
     from: fromAddress,
     to: Array.isArray(opts.to) ? opts.to : [opts.to],
     subject: opts.subject,
     ...(opts.text ? { text: opts.text } : {}),
     ...(opts.html ? { html: opts.html } : {}),
     ...(opts.replyTo ? { replyTo: opts.replyTo } : {}),
-  };
+  } as sgMail.MailDataRequired;
 
   const [response] = await sgMail.send(msg);
   return { id: response.headers["x-message-id"] as string, sent: true };

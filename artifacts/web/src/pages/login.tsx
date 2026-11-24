@@ -184,8 +184,11 @@ export default function Login() {
                         autoComplete="email"
                         className="h-11"
                         data-testid="input-email"
-                        ref={emailRef}
-                        {...field} 
+                        {...field}
+                        ref={(el) => {
+                          field.ref(el);
+                          emailRef.current = el;
+                        }}
                       />
                     </FormControl>
                     <FormMessage />

@@ -170,7 +170,7 @@ export default function AdminMailboxes() {
             {!configLoading && !config?.resendConfigured && (
               <div className="mt-4 flex items-start gap-2 p-3 rounded-md bg-amber-500/10 border border-amber-500/20 text-amber-700 dark:text-amber-400 text-xs">
                 <AlertTriangle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                <span>Resend API key is missing or invalid. Go to the Replit Secrets panel and set <strong>RESEND_API_KEY</strong> to a valid key from <strong>app.resend.com/api-keys</strong>.</span>
+                <span>Resend API key is missing or invalid. Set <strong>RESEND_API_KEY</strong> to a valid key from <strong>app.resend.com/api-keys</strong> in the server's environment variables (Render → Environment).</span>
               </div>
             )}
             {!configLoading && config?.resendConfigured && !config?.customDomain && (

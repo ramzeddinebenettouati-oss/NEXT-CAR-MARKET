@@ -9,6 +9,7 @@ import {
   useApproveVehicle,
   useRejectVehicle,
   useListCommissionRules,
+  getListCommissionRulesQueryKey,
 } from "@workspace/api-client-react";
 import { useAuth } from "@/hooks/use-auth";
 import { useAdminPermissions } from "@/hooks/use-admin-permissions";
@@ -54,7 +55,7 @@ function CommissionPanel({
   const [saving, setSaving] = useState(false);
 
   const { data: rulesData } = useListCommissionRules({ isActive: "true" } as any, {
-    query: { enabled: canAssign },
+    query: { queryKey: getListCommissionRulesQueryKey({ isActive: "true" } as any), enabled: canAssign },
   });
   const rules = (rulesData?.data ?? []) as Array<Record<string, any>>;
 

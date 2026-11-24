@@ -1,7 +1,7 @@
 import { useState, useMemo } from "react";
 import { useFormatters } from "@/hooks/use-formatters";
 import { Link } from "wouter";
-import { useListQuotations, useListCommissionRules } from "@workspace/api-client-react";
+import { useListQuotations, useListCommissionRules, getListQuotationsQueryKey } from "@workspace/api-client-react";
 import { AdminLayout } from "@/components/admin-layout";
 import { useAdminPermissions } from "@/hooks/use-admin-permissions";
 import { useAuth } from "@/hooks/use-auth";
@@ -94,7 +94,7 @@ export default function AdminQuotations() {
 
   const { data, isLoading } = useListQuotations(
     { limit: 1000 } as any,
-    { query: { enabled: hasPermission && !permLoading } }
+    { query: { queryKey: getListQuotationsQueryKey({ limit: 1000 } as any), enabled: hasPermission && !permLoading } }
   );
   const rows = (data?.data ?? []) as Array<Record<string, any>>;
 

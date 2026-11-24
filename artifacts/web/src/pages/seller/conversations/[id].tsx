@@ -8,6 +8,7 @@ import {
   useMarkConversationRead,
   useSendConversationQuotation,
   useGetVehicle,
+  getGetVehicleQueryKey,
   getGetConversationQueryKey,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -160,7 +161,7 @@ export default function SellerConversationChat() {
 
   const { data: vehicleData } = useGetVehicle(
     (conv as any)?.vehicleId ?? "",
-    { query: { enabled: !!(conv as any)?.vehicleId } }
+    { query: { queryKey: getGetVehicleQueryKey((conv as any)?.vehicleId ?? ""), enabled: !!(conv as any)?.vehicleId } }
   );
 
   const markRead = useMarkConversationRead();

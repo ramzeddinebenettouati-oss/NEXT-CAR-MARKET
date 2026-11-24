@@ -301,7 +301,7 @@ export default function AdminMessagesNew() {
                                 onClick={() => {
                                   setReferenceResolved(r);
                                   setRefDropdownOpen(false);
-                                  if (!subject || subject === `Discussion re: ${referenceResolved?.number}`) {
+                                  if (!subject) {
                                     setSubject(`Discussion re: ${r.number}`);
                                   }
                                 }}

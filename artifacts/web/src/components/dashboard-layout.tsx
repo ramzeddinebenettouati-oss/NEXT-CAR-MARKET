@@ -8,7 +8,7 @@ import { ModeToggle } from "@/components/mode-toggle";
 import { LanguageSelector } from "@/components/language-selector";
 import {
   LogOut, Heart, MessageCircle,
-  Bell, LayoutDashboard, FileText, Container, Receipt, Truck, Menu, Settings,
+  Bell, LayoutDashboard, FileText, Container, Receipt, Truck, Menu, Settings, Package,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
